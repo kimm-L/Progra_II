@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "kL302006",
+    "database": "usuarios_p",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "kL302006",
+    "database": "usuarios_p_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "kL302006",
+    "database": "usuarios_p_prod",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
