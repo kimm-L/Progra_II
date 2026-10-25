@@ -27,7 +27,7 @@ export class ApiService {
   }
 
   login(credentials: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login`, credentials);
+    return this.http.post(`${this.baseUrl}/auth/login`, credentials);
   }
 
   getUsuarios(): Observable<any> {

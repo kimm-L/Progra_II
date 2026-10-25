@@ -1,34 +1,52 @@
 const { Usuario, Grupo } = require('../models');
 const bcrypt = require('bcryptjs');
 
-// Listar todos los usuarios
 exports.obtenerUsuarios = async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
-      attributes: { exclude: ['password'] },
+      attributes: ['id', 'login', 'grupoId'],
       include: {
         model: Grupo,
         as: 'grupo',
         attributes: ['id', 'nombre']
-      }
+      },
+      order: [['id', 'ASC']]
     });
-    res.json(usuarios);
+
+    const data = usuarios.map(usuario => ({
+      id: usuario.id,
+      login: usuario.login,
+      grupoId: usuario.grupoId,
+      grupo: usuario.grupo ? usuario.grupo.nombre : null
+    }));
+
+    res.json(data);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener los usuarios', error: error.message });
   }
 };
 
-// Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
   try {
     const { login, password, grupoId } = req.body;
 
-    // Encriptar la contraseña
+    if (!login || !login.trim()) {
+      return res.status(400).json({ mensaje: 'El login es obligatorio' });
+    }
+
+    if (!password || !password.trim()) {
+      return res.status(400).json({ mensaje: 'La contraseña es obligatoria' });
+    }
+
+    if (!grupoId) {
+      return res.status(400).json({ mensaje: 'El grupo es obligatorio' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
     const nuevoUsuario = await Usuario.create({
-      login,
+      login: login.trim(),
       password: passwordHash,
       grupoId
     });
@@ -43,5 +61,54 @@ exports.crearUsuario = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al crear el usuario', error: error.message });
+  }
+};
+
+exports.actualizarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { login, password, grupoId } = req.body;
+
+    const usuario = await Usuario.findByPk(id);
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    if (login) usuario.login = login.trim();
+    if (grupoId) usuario.grupoId = grupoId;
+
+    if (password && password.trim() !== '') {
+      const salt = await bcrypt.genSalt(10);
+      usuario.password = await bcrypt.hash(password, salt);
+    }
+
+    await usuario.save();
+
+    res.json({
+      mensaje: 'Usuario actualizado correctamente',
+      usuario: {
+        id: usuario.id,
+        login: usuario.login,
+        grupoId: usuario.grupoId
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar el usuario', error: error.message });
+  }
+};
+
+exports.eliminarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario = await Usuario.findByPk(id);
+
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    await usuario.destroy();
+    res.json({ mensaje: 'Usuario eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al eliminar el usuario', error: error.message });
   }
 };

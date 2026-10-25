@@ -12,7 +12,10 @@ import { ApiService } from '../../services/api';
     <div style="padding: 20px; font-family: Arial;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>Dashboard Principal</h2>
-        <button (click)="logout()" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <button
+          (click)="logout()"
+          style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;"
+        >
           Cerrar Sesión
         </button>
       </div>
@@ -34,13 +37,60 @@ import { ApiService } from '../../services/api';
 
         <div *ngIf="modoCrear || modoEditar" style="background: #f8f9fa; padding: 15px; border: 1px solid #ddd; margin-bottom: 20px; border-radius: 5px;">
           <h4>{{ modoEditar ? 'Editar registro en ' + vistaActual : 'Agregar nuevo en ' + vistaActual }}</h4>
-          <div *ngFor="let col of columnas" style="margin-bottom: 10px;" [hidden]="esIdColumna(col) && !modoEditar">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ col }}:</label>
-            <input type="text" [(ngModel)]="registroActual[col]" [disabled]="modoEditar && esIdColumna(col)" style="width: 100%; padding: 8px; box-sizing: border-box;" />
-          </div>
-          <button (click)="modoEditar ? actualizarRegistro() : guardarNuevo()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+
+          <ng-container *ngIf="vistaActual === 'usuarios'">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">login:</label>
+              <input type="text" [(ngModel)]="registroActual.login" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">password:</label>
+              <input type="password" [(ngModel)]="registroActual.password" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">grupoId:</label>
+              <select [(ngModel)]="registroActual.grupoId" style="width: 100%; padding: 8px; box-sizing: border-box;">
+                <option [ngValue]="1">1</option>
+                <option [ngValue]="2">2</option>
+              </select>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="vistaActual === 'clientes'">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">nombre:</label>
+              <input type="text" [(ngModel)]="registroActual.nombre" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">direccion:</label>
+              <input type="text" [(ngModel)]="registroActual.direccion" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">telefono:</label>
+              <input type="text" [(ngModel)]="registroActual.telefono" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">email:</label>
+              <input type="email" [(ngModel)]="registroActual.email" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="vistaActual !== 'usuarios' && vistaActual !== 'clientes'">
+            <div *ngFor="let col of columnas" style="margin-bottom: 10px;" [hidden]="esIdColumna(col) && !modoEditar">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ col }}:</label>
+              <input type="text" [(ngModel)]="registroActual[col]" [disabled]="modoEditar && esIdColumna(col)" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+          </ng-container>
+
+          <button (click)="modoEditar ? actualizarRegistro() : guardarNuevo()" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
             {{ modoEditar ? 'Actualizar' : 'Guardar' }}
           </button>
+
           <button (click)="cerrarFormularios()" style="padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
         </div>
 
@@ -51,6 +101,7 @@ import { ApiService } from '../../services/api';
               <th style="padding: 8px;">Acciones</th>
             </tr>
           </thead>
+
           <tbody>
             <tr *ngFor="let row of datosActuales">
               <td style="padding: 8px;" *ngFor="let col of columnas">{{ row[col] }}</td>
@@ -72,11 +123,20 @@ export class DashboardComponent implements OnInit {
   columnas: string[] = [];
   vistaActual: string = '';
   mensajeError: string = '';
-  
+
   modoCrear: boolean = false;
   modoEditar: boolean = false;
   registroActual: any = {};
   idRegistroSeleccionado: any = null;
+
+  private camposPorVista: Record<string, string[]> = {
+    usuarios: ['id', 'login', 'grupoId'],
+    clientes: ['id', 'nombre', 'direccion', 'telefono', 'email'],
+    grupos: ['id', 'nombre'],
+    permisos: ['id', 'nombre'],
+    grupoPermisos: ['id', 'grupoId', 'permisoId'],
+    recibos: ['id', 'clienteId', 'fecha', 'descripcion', 'total']
+  };
 
   constructor(public apiService: ApiService, private router: Router) {}
 
@@ -87,14 +147,26 @@ export class DashboardComponent implements OnInit {
   cargarTabla(nombre: string, observable: any) {
     this.mensajeError = '';
     this.cerrarFormularios();
+
     observable.subscribe({
       next: (data: any) => {
-        this.datosActuales = data;
+        this.datosActuales = data || [];
         this.vistaActual = nombre;
-        if (data.length > 0) {
-          this.columnas = Object.keys(data[0]);
+
+        if (this.datosActuales.length > 0) {
+          const columnasBase = Object.keys(this.datosActuales[0]);
+
+          if (nombre === 'clientes') {
+            this.columnas = ['id', 'nombre', 'direccion', 'telefono', 'email'];
+          } else if (nombre === 'usuarios') {
+            this.columnas = ['id', 'login', 'grupoId'];
+          } else {
+            this.columnas = columnasBase.filter(col =>
+              !['createdAt', 'updatedAt', 'grupo', 'usuario', 'cliente', 'permiso'].includes(col)
+            );
+          }
         } else {
-          this.columnas = [];
+          this.columnas = this.camposPorVista[nombre] || [];
         }
       },
       error: (err: any) => {
@@ -111,17 +183,66 @@ export class DashboardComponent implements OnInit {
   abrirFormularioNuevo() {
     this.modoCrear = true;
     this.modoEditar = false;
-    this.registroActual = {};
+
+    if (this.vistaActual === 'usuarios') {
+      this.registroActual = {
+        login: '',
+        password: '',
+        grupoId: 1
+      };
+    } else if (this.vistaActual === 'clientes') {
+      this.registroActual = {
+        nombre: '',
+        direccion: '',
+        telefono: '',
+        email: ''
+      };
+    } else if (this.vistaActual === 'grupos') {
+      this.registroActual = { nombre: '' };
+    } else if (this.vistaActual === 'permisos') {
+      this.registroActual = { nombre: '' };
+    } else if (this.vistaActual === 'grupoPermisos') {
+      this.registroActual = {
+        grupoId: 1,
+        permisoId: 1
+      };
+    } else if (this.vistaActual === 'recibos') {
+      this.registroActual = {
+        clienteId: 1,
+        fecha: '',
+        descripcion: '',
+        total: ''
+      };
+    } else {
+      this.registroActual = {};
+    }
   }
 
   abrirFormularioEditar(row: any) {
     this.modoEditar = true;
     this.modoCrear = false;
-    this.idRegistroSeleccionado = row.id_usuario || row.id_cliente || row.id_grupo || row.id_permiso || row.id_recibo || row.id;
-    this.registroActual = { ...row };
+
+    this.idRegistroSeleccionado =
+      row.id_usuario ||
+      row.id_cliente ||
+      row.id_grupo ||
+      row.id_permiso ||
+      row.id_recibo ||
+      row.id;
+
+    const limpio = { ...row };
+
+    delete limpio.createdAt;
+    delete limpio.updatedAt;
+    delete limpio.grupo;
+    delete limpio.usuario;
+    delete limpio.cliente;
+    delete limpio.permiso;
+
+    this.registroActual = limpio;
   }
 
-    cerrarFormularios() {
+  cerrarFormularios() {
     this.modoCrear = false;
     this.modoEditar = false;
     this.registroActual = {};
@@ -129,7 +250,35 @@ export class DashboardComponent implements OnInit {
   }
 
   guardarNuevo() {
-    this.apiService.crearRegistro(this.vistaActual, this.registroActual).subscribe({
+    const payload = { ...this.registroActual };
+
+    if (this.vistaActual === 'usuarios') {
+      if (!payload.login || !payload.login.trim()) {
+        this.mensajeError = 'El login es obligatorio.';
+        return;
+      }
+      if (!payload.password || !payload.password.trim()) {
+        this.mensajeError = 'La contraseña es obligatoria.';
+        return;
+      }
+      if (!payload.grupoId) {
+        this.mensajeError = 'Debes seleccionar un grupo.';
+        return;
+      }
+    }
+
+    if (this.vistaActual === 'clientes') {
+      if (!payload.nombre || !payload.direccion || !payload.telefono || !payload.email) {
+        this.mensajeError = 'Nombre, dirección, teléfono y email son obligatorios.';
+        return;
+      }
+    }
+
+    delete payload.createdAt;
+    delete payload.updatedAt;
+    delete payload.grupo;
+
+    this.apiService.crearRegistro(this.vistaActual, payload).subscribe({
       next: () => {
         this.cerrarFormularios();
         this.cargarTabla(this.vistaActual, this.obtenerObservableActual());
@@ -147,7 +296,13 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.apiService.actualizarRegistro(this.vistaActual, this.idRegistroSeleccionado, this.registroActual).subscribe({
+    const payload = { ...this.registroActual };
+
+    delete payload.createdAt;
+    delete payload.updatedAt;
+    delete payload.grupo;
+
+    this.apiService.actualizarRegistro(this.vistaActual, this.idRegistroSeleccionado, payload).subscribe({
       next: () => {
         this.cerrarFormularios();
         this.cargarTabla(this.vistaActual, this.obtenerObservableActual());
@@ -160,8 +315,14 @@ export class DashboardComponent implements OnInit {
   }
 
   eliminar(row: any) {
-    const id = row.id_usuario || row.id_cliente || row.id_grupo || row.id_permiso || row.id_recibo || row.id;
-    
+    const id =
+      row.id_usuario ||
+      row.id_cliente ||
+      row.id_grupo ||
+      row.id_permiso ||
+      row.id_recibo ||
+      row.id;
+
     if (!id) {
       this.mensajeError = 'No se pudo identificar el ID del registro.';
       return;
@@ -182,13 +343,20 @@ export class DashboardComponent implements OnInit {
 
   obtenerObservableActual() {
     switch (this.vistaActual) {
-      case 'usuarios': return this.apiService.getUsuarios();
-      case 'clientes': return this.apiService.getClientes();
-      case 'grupos': return this.apiService.getGrupos();
-      case 'permisos': return this.apiService.getPermisos();
-      case 'grupoPermisos': return this.apiService.getGrupoPermisos();
-      case 'recibos': return this.apiService.getRecibos();
-      default: return this.apiService.getUsuarios();
+      case 'usuarios':
+        return this.apiService.getUsuarios();
+      case 'clientes':
+        return this.apiService.getClientes();
+      case 'grupos':
+        return this.apiService.getGrupos();
+      case 'permisos':
+        return this.apiService.getPermisos();
+      case 'grupoPermisos':
+        return this.apiService.getGrupoPermisos();
+      case 'recibos':
+        return this.apiService.getRecibos();
+      default:
+        return this.apiService.getUsuarios();
     }
   }
 

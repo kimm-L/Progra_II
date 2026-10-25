@@ -6,7 +6,6 @@ exports.login = async (req, res) => {
   try {
     const { login, password } = req.body;
 
-    // Buscar usuario por su login e incluir su grupo y permisos
     const usuario = await Usuario.findOne({
       where: { login },
       include: {
@@ -23,12 +22,11 @@ exports.login = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    // Validar contraseña temporalmente sin bcrypt
-    if (password !== usuario.password) {
+    const passwordValida = await bcrypt.compare(password, usuario.password);
+    if (!passwordValida) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
 
-    // Generar el token JWT usando la clave del .env
     const token = jwt.sign(
       { id: usuario.id, login: usuario.login, grupoId: usuario.grupoId },
       process.env.JWT_SECRET,
@@ -41,11 +39,9 @@ exports.login = async (req, res) => {
       usuario: {
         id: usuario.id,
         login: usuario.login,
-        grupo: usuario.grupo.nombre,
-        permisos: usuario.grupo.permisos.map(p => p.nombre)
+        grupo: usuario.grupo ? usuario.grupo.nombre : null,
+        permisos: usuario.grupo && usuario.grupo.permisos ? usuario.grupo.permisos.map(p => p.nombre) : []
       }
     });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error en el servidor', error: error.message });
-  }
-};
