@@ -3,11 +3,16 @@ const { Permiso } = require('../models');
 exports.obtenerPermisos = async (req, res) => {
   try {
     const permisos = await Permiso.findAll({
+      attributes: ['id', 'nombre'],
       order: [['id', 'ASC']]
     });
+
     res.json(permisos);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener los permisos', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al obtener los permisos',
+      error: error.message
+    });
   }
 };
 
@@ -26,7 +31,10 @@ exports.crearPermiso = async (req, res) => {
       permiso
     });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear el permiso', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al crear el permiso',
+      error: error.message
+    });
   }
 };
 
@@ -46,7 +54,10 @@ exports.actualizarPermiso = async (req, res) => {
 
     res.json({ mensaje: 'Permiso actualizado', permiso });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al actualizar el permiso', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al actualizar el permiso',
+      error: error.message
+    });
   }
 };
 
@@ -60,8 +71,12 @@ exports.eliminarPermiso = async (req, res) => {
     }
 
     await permiso.destroy();
+
     res.json({ mensaje: 'Permiso eliminado correctamente' });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al eliminar el permiso', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al eliminar el permiso',
+      error: error.message
+    });
   }
 };

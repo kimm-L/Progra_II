@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // 1. Insertar el catálogo de permisos que pide la guía
     await queryInterface.bulkInsert('Permisos', [
       { id: 1, nombre: 'frmventas', createdAt: new Date(), updatedAt: new Date() },
       { id: 2, nombre: 'frminventario', createdAt: new Date(), updatedAt: new Date() },
@@ -15,7 +14,6 @@ module.exports = {
       { id: 8, nombre: 'permisos', createdAt: new Date(), updatedAt: new Date() }
     ], {});
 
-    // 2. Insertar los grupos de usuarios
     await queryInterface.bulkInsert('Grupos', [
       { id: 1, nombre: 'administrador', createdAt: new Date(), updatedAt: new Date() },
       { id: 2, nombre: 'ventas', createdAt: new Date(), updatedAt: new Date() },
@@ -23,7 +21,6 @@ module.exports = {
       { id: 4, nombre: 'compras', createdAt: new Date(), updatedAt: new Date() }
     ], {});
 
-    // 3. Asignar todos los permisos al grupo Administrador (id 1)
     await queryInterface.bulkInsert('GrupoPermisos', [
       { id: 1, grupoId: 1, permisoId: 1, createdAt: new Date(), updatedAt: new Date() },
       { id: 2, grupoId: 1, permisoId: 2, createdAt: new Date(), updatedAt: new Date() },
@@ -35,8 +32,8 @@ module.exports = {
       { id: 8, grupoId: 1, permisoId: 8, createdAt: new Date(), updatedAt: new Date() }
     ], {});
 
-    // 4. Crear un usuario Administrador inicial con contraseña hasheada
-    const passwordHash = await bcrypt.hash('123456789', 10);
+    const passwordHash = await bcrypt.hash('admin123', 10);
+
     await queryInterface.bulkInsert('Usuarios', [
       {
         id: 1,

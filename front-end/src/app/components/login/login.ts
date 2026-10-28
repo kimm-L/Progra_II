@@ -9,20 +9,26 @@ import { ApiService } from '../../services/api';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div style="max-width: 400px; margin: 40px auto; padding: 20px; font-family: Arial; border: 1px solid #ccc; border-radius: 8px;">
-      <h2>Iniciar Sesión</h2>
+    <div style="max-width: 420px; margin: 60px auto; padding: 20px; font-family: Arial; border: 1px solid #ccc; border-radius: 10px; background: #f9f9f9;">
+      <h2 style="text-align: center; font-size: 2rem; margin-bottom: 25px;">Iniciar Sesión</h2>
+
       <form (ngSubmit)="onLogin()">
         <div style="margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 5px;">Usuario:</label>
-          <input type="text" [(ngModel)]="loginData.login" name="login" required style="width: 100%; padding: 8px;" />
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Usuario:</label>
+          <input type="text" [(ngModel)]="loginData.login" name="login" required style="width: 100%; padding: 10px; box-sizing: border-box;" />
         </div>
+
         <div style="margin-bottom: 15px;">
-          <label style="display: block; margin-bottom: 5px;">Contraseña:</label>
-          <input type="password" [(ngModel)]="loginData.password" name="password" required style="width: 100%; padding: 8px;" />
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Contraseña:</label>
+          <input type="password" [(ngModel)]="loginData.password" name="password" required style="width: 100%; padding: 10px; box-sizing: border-box;" />
         </div>
-        <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Ingresar</button>
+
+        <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem;">
+          Ingresar
+        </button>
       </form>
-      <p *ngIf="errorMessage" style="color: red; margin-top: 15px;">{{ errorMessage }}</p>
+
+      <p *ngIf="errorMessage" style="color: red; margin-top: 15px; text-align: center;">{{ errorMessage }}</p>
     </div>
   `
 })
@@ -35,7 +41,6 @@ export class LoginComponent {
   onLogin() {
     this.apiService.login(this.loginData).subscribe({
       next: (response: any) => {
-        console.log('Login exitoso:', response);
         localStorage.setItem('token', response.token);
         this.router.navigate(['/dashboard']);
       },

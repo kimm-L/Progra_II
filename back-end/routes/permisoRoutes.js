@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const grupoPermisoController = require('../controllers/grupoPermisoController');
+const permisoController = require('../controllers/permisoController');
 
-router.get('/', grupoPermisoController.obtenerGrupoPermisos);
-router.post('/', grupoPermisoController.crearGrupoPermiso);
-router.put('/:id', grupoPermisoController.actualizarGrupoPermiso);
-router.delete('/:id', grupoPermisoController.eliminarGrupoPermiso);
+router.get('/', permisoController.obtenerPermisos);
+router.post('/', permisoController.crearPermiso);
+router.put('/:id', permisoController.actualizarPermiso);
+router.delete('/:id', permisoController.eliminarPermiso);
 
 module.exports = router;

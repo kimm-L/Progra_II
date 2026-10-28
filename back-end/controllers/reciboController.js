@@ -3,11 +3,16 @@ const { Recibo } = require('../models');
 exports.obtenerRecibos = async (req, res) => {
   try {
     const recibos = await Recibo.findAll({
+      attributes: ['id', 'clienteId', 'fecha', 'descripcion', 'total'],
       order: [['id', 'ASC']]
     });
+
     res.json(recibos);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener los recibos', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al obtener los recibos',
+      error: error.message
+    });
   }
 };
 
@@ -15,8 +20,10 @@ exports.crearRecibo = async (req, res) => {
   try {
     const { clienteId, fecha, descripcion, total } = req.body;
 
-    if (!clienteId || !fecha || !descripcion || !total) {
-      return res.status(400).json({ mensaje: 'clienteId, fecha, descripcion y total son obligatorios' });
+    if (!clienteId || !fecha || !descripcion || !descripcion.trim() || !total) {
+      return res.status(400).json({
+        mensaje: 'clienteId, fecha, descripcion y total son obligatorios'
+      });
     }
 
     const recibo = await Recibo.create({
@@ -31,7 +38,10 @@ exports.crearRecibo = async (req, res) => {
       recibo
     });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear el recibo', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al crear el recibo',
+      error: error.message
+    });
   }
 };
 
@@ -53,15 +63,22 @@ exports.actualizarRecibo = async (req, res) => {
 
     await recibo.save();
 
-    res.json({ mensaje: 'Recibo actualizado', recibo });
+    res.json({
+      mensaje: 'Recibo actualizado correctamente',
+      recibo
+    });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al actualizar el recibo', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al actualizar el recibo',
+      error: error.message
+    });
   }
 };
 
 exports.eliminarRecibo = async (req, res) => {
   try {
     const { id } = req.params;
+
     const recibo = await Recibo.findByPk(id);
 
     if (!recibo) {
@@ -69,8 +86,12 @@ exports.eliminarRecibo = async (req, res) => {
     }
 
     await recibo.destroy();
+
     res.json({ mensaje: 'Recibo eliminado correctamente' });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al eliminar el recibo', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al eliminar el recibo',
+      error: error.message
+    });
   }
 };

@@ -3,11 +3,16 @@ const { Grupo } = require('../models');
 exports.obtenerGrupos = async (req, res) => {
   try {
     const grupos = await Grupo.findAll({
+      attributes: ['id', 'nombre'],
       order: [['id', 'ASC']]
     });
+
     res.json(grupos);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener los grupos', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al obtener los grupos',
+      error: error.message
+    });
   }
 };
 
@@ -26,7 +31,10 @@ exports.crearGrupo = async (req, res) => {
       grupo
     });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear el grupo', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al crear el grupo',
+      error: error.message
+    });
   }
 };
 
@@ -46,7 +54,10 @@ exports.actualizarGrupo = async (req, res) => {
 
     res.json({ mensaje: 'Grupo actualizado', grupo });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al actualizar el grupo', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al actualizar el grupo',
+      error: error.message
+    });
   }
 };
 
@@ -62,6 +73,9 @@ exports.eliminarGrupo = async (req, res) => {
     await grupo.destroy();
     res.json({ mensaje: 'Grupo eliminado correctamente' });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al eliminar el grupo', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al eliminar el grupo',
+      error: error.message
+    });
   }
 };

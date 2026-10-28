@@ -14,16 +14,22 @@ export class ApiService {
     const token = localStorage.getItem('token') || '';
     return {
       headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       })
     };
   }
 
   private normalizarTabla(tabla: string): string {
-    if (tabla === 'grupoPermisos') {
-      return 'grupo-permisos';
+    const normalized = tabla.trim();
+
+    switch (normalized) {
+      case 'grupoPermisos':
+      case 'grupo-permisos':
+      case 'grupopermisos':
+        return 'grupo-permisos';
+      default:
+        return normalized;
     }
-    return tabla;
   }
 
   login(credentials: any): Observable<any> {
@@ -47,7 +53,7 @@ export class ApiService {
   }
 
   getGrupoPermisos(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/grupo-permisos`, this.getHeaders());
+    return this.http.get(`${this.baseUrl}/${this.normalizarTabla('grupoPermisos')}`, this.getHeaders());
   }
 
   getRecibos(): Observable<any> {

@@ -5,9 +5,13 @@ exports.obtenerGrupoPermisos = async (req, res) => {
     const grupoPermisos = await GrupoPermiso.findAll({
       order: [['id', 'ASC']]
     });
+
     res.json(grupoPermisos);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener los grupo permisos', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al obtener los permisos del grupo',
+      error: error.message
+    });
   }
 };
 
@@ -16,17 +20,25 @@ exports.crearGrupoPermiso = async (req, res) => {
     const { grupoId, permisoId } = req.body;
 
     if (!grupoId || !permisoId) {
-      return res.status(400).json({ mensaje: 'grupoId y permisoId son obligatorios' });
+      return res.status(400).json({
+        mensaje: 'grupoId y permisoId son obligatorios'
+      });
     }
 
-    const grupoPermiso = await GrupoPermiso.create({ grupoId, permisoId });
+    const relacion = await GrupoPermiso.create({
+      grupoId,
+      permisoId
+    });
 
     res.status(201).json({
       mensaje: 'Relación creada exitosamente',
-      grupoPermiso
+      relacion
     });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear la relación', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al crear la relación',
+      error: error.message
+    });
   }
 };
 
@@ -35,34 +47,46 @@ exports.actualizarGrupoPermiso = async (req, res) => {
     const { id } = req.params;
     const { grupoId, permisoId } = req.body;
 
-    const registro = await GrupoPermiso.findByPk(id);
+    const relacion = await GrupoPermiso.findByPk(id);
 
-    if (!registro) {
+    if (!relacion) {
       return res.status(404).json({ mensaje: 'Relación no encontrada' });
     }
 
-    registro.grupoId = grupoId;
-    registro.permisoId = permisoId;
-    await registro.save();
+    relacion.grupoId = grupoId;
+    relacion.permisoId = permisoId;
 
-    res.json({ mensaje: 'Relación actualizada', registro });
+    await relacion.save();
+
+    res.json({
+      mensaje: 'Relación actualizada correctamente',
+      relacion
+    });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al actualizar la relación', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al actualizar la relación',
+      error: error.message
+    });
   }
 };
 
 exports.eliminarGrupoPermiso = async (req, res) => {
   try {
     const { id } = req.params;
-    const registro = await GrupoPermiso.findByPk(id);
 
-    if (!registro) {
+    const relacion = await GrupoPermiso.findByPk(id);
+
+    if (!relacion) {
       return res.status(404).json({ mensaje: 'Relación no encontrada' });
     }
 
-    await registro.destroy();
+    await relacion.destroy();
+
     res.json({ mensaje: 'Relación eliminada correctamente' });
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al eliminar la relación', error: error.message });
+    res.status(500).json({
+      mensaje: 'Error al eliminar la relación',
+      error: error.message
+    });
   }
 };

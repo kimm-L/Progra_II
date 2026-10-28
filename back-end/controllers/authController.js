@@ -23,6 +23,7 @@ exports.login = async (req, res) => {
     }
 
     const passwordValida = await bcrypt.compare(password, usuario.password);
+
     if (!passwordValida) {
       return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
@@ -46,4 +47,4 @@ exports.login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ mensaje: 'Error en el servidor', error: error.message });
   }
-};  
+};

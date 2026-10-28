@@ -70,28 +70,21 @@ exports.actualizarUsuario = async (req, res) => {
     const { login, password, grupoId } = req.body;
 
     const usuario = await Usuario.findByPk(id);
+
     if (!usuario) {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    if (login) usuario.login = login.trim();
-    if (grupoId) usuario.grupoId = grupoId;
-
-    if (password && password.trim() !== '') {
+    usuario.login = login;
+    if (password) {
       const salt = await bcrypt.genSalt(10);
       usuario.password = await bcrypt.hash(password, salt);
     }
+    usuario.grupoId = grupoId;
 
     await usuario.save();
 
-    res.json({
-      mensaje: 'Usuario actualizado correctamente',
-      usuario: {
-        id: usuario.id,
-        login: usuario.login,
-        grupoId: usuario.grupoId
-      }
-    });
+    res.json({ mensaje: 'Usuario actualizado correctamente', usuario });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al actualizar el usuario', error: error.message });
   }
@@ -107,6 +100,7 @@ exports.eliminarUsuario = async (req, res) => {
     }
 
     await usuario.destroy();
+
     res.json({ mensaje: 'Usuario eliminado correctamente' });
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al eliminar el usuario', error: error.message });

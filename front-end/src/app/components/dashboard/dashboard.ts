@@ -12,10 +12,7 @@ import { ApiService } from '../../services/api';
     <div style="padding: 20px; font-family: Arial;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>Dashboard Principal</h2>
-        <button
-          (click)="logout()"
-          style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;"
-        >
+        <button (click)="logout()" style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
           Cerrar Sesión
         </button>
       </div>
@@ -40,17 +37,17 @@ import { ApiService } from '../../services/api';
 
           <ng-container *ngIf="vistaActual === 'usuarios'">
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">login:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Usuario:</label>
               <input type="text" [(ngModel)]="registroActual.login" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
 
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">password:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Contraseña:</label>
               <input type="password" [(ngModel)]="registroActual.password" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
 
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">grupoId:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Grupo:</label>
               <select [(ngModel)]="registroActual.grupoId" style="width: 100%; padding: 8px; box-sizing: border-box;">
                 <option [ngValue]="1">1</option>
                 <option [ngValue]="2">2</option>
@@ -60,30 +57,71 @@ import { ApiService } from '../../services/api';
 
           <ng-container *ngIf="vistaActual === 'clientes'">
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">nombre:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre:</label>
               <input type="text" [(ngModel)]="registroActual.nombre" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
 
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">direccion:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Dirección:</label>
               <input type="text" [(ngModel)]="registroActual.direccion" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
 
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">telefono:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Teléfono:</label>
               <input type="text" [(ngModel)]="registroActual.telefono" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
 
             <div style="margin-bottom: 10px;">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">email:</label>
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Email:</label>
               <input type="email" [(ngModel)]="registroActual.email" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
           </ng-container>
 
-          <ng-container *ngIf="vistaActual !== 'usuarios' && vistaActual !== 'clientes'">
-            <div *ngFor="let col of columnas" style="margin-bottom: 10px;" [hidden]="esIdColumna(col) && !modoEditar">
-              <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ col }}:</label>
-              <input type="text" [(ngModel)]="registroActual[col]" [disabled]="modoEditar && esIdColumna(col)" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+          <ng-container *ngIf="vistaActual === 'grupos'">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre:</label>
+              <input type="text" [(ngModel)]="registroActual.nombre" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="vistaActual === 'permisos'">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nombre:</label>
+              <input type="text" [(ngModel)]="registroActual.nombre" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="vistaActual === 'grupoPermisos'">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Grupo:</label>
+              <input type="number" [(ngModel)]="registroActual.grupoId" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Permiso:</label>
+              <input type="number" [(ngModel)]="registroActual.permisoId" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="vistaActual === 'recibos'">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Cliente:</label>
+              <input type="number" [(ngModel)]="registroActual.clienteId" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Fecha:</label>
+              <input type="date" [(ngModel)]="registroActual.fecha" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Descripción:</label>
+              <input type="text" [(ngModel)]="registroActual.descripcion" style="width: 100%; padding: 8px; box-sizing: border-box;" />
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-weight: bold; margin-bottom: 5px;">Total:</label>
+              <input type="number" [(ngModel)]="registroActual.total" style="width: 100%; padding: 8px; box-sizing: border-box;" />
             </div>
           </ng-container>
 
@@ -97,7 +135,7 @@ import { ApiService } from '../../services/api';
         <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 10px; text-align: left;">
           <thead>
             <tr style="background-color: #f2f2f2;">
-              <th style="padding: 8px;" *ngFor="let col of columnas">{{ col }}</th>
+              <th style="padding: 8px;" *ngFor="let col of columnas">{{ getDisplayLabel(col) }}</th>
               <th style="padding: 8px;">Acciones</th>
             </tr>
           </thead>
@@ -129,19 +167,30 @@ export class DashboardComponent implements OnInit {
   registroActual: any = {};
   idRegistroSeleccionado: any = null;
 
-  private camposPorVista: Record<string, string[]> = {
-    usuarios: ['id', 'login', 'grupoId'],
-    clientes: ['id', 'nombre', 'direccion', 'telefono', 'email'],
-    grupos: ['id', 'nombre'],
-    permisos: ['id', 'nombre'],
-    grupoPermisos: ['id', 'grupoId', 'permisoId'],
-    recibos: ['id', 'clienteId', 'fecha', 'descripcion', 'total']
+  private readonly labelMap: Record<string, string> = {
+    id: 'ID',
+    login: 'Usuario',
+    password: 'Contraseña',
+    grupoId: 'Grupo',
+    permisoId: 'Permiso',
+    clienteId: 'Cliente',
+    nombre: 'Nombre',
+    direccion: 'Dirección',
+    telefono: 'Teléfono',
+    email: 'Email',
+    fecha: 'Fecha',
+    descripcion: 'Descripción',
+    total: 'Total'
   };
 
   constructor(public apiService: ApiService, private router: Router) {}
 
   ngOnInit() {
     this.cargarTabla('usuarios', this.apiService.getUsuarios());
+  }
+
+  getDisplayLabel(col: string): string {
+    return this.labelMap[col] || col;
   }
 
   cargarTabla(nombre: string, observable: any) {
@@ -154,19 +203,11 @@ export class DashboardComponent implements OnInit {
         this.vistaActual = nombre;
 
         if (this.datosActuales.length > 0) {
-          const columnasBase = Object.keys(this.datosActuales[0]);
-
-          if (nombre === 'clientes') {
-            this.columnas = ['id', 'nombre', 'direccion', 'telefono', 'email'];
-          } else if (nombre === 'usuarios') {
-            this.columnas = ['id', 'login', 'grupoId'];
-          } else {
-            this.columnas = columnasBase.filter(col =>
-              !['createdAt', 'updatedAt', 'grupo', 'usuario', 'cliente', 'permiso'].includes(col)
-            );
-          }
+          this.columnas = Object.keys(this.datosActuales[0]).filter(col => {
+            return !['createdAt', 'updatedAt', 'grupo', 'permiso', 'cliente', 'usuario'].includes(col);
+          });
         } else {
-          this.columnas = this.camposPorVista[nombre] || [];
+          this.columnas = this.getColumnasPorVista(nombre);
         }
       },
       error: (err: any) => {
@@ -176,8 +217,21 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  getColumnasPorVista(vista: string): string[] {
+    const map: Record<string, string[]> = {
+      usuarios: ['id', 'login', 'grupoId'],
+      clientes: ['id', 'nombre', 'direccion', 'telefono', 'email'],
+      grupos: ['id', 'nombre'],
+      permisos: ['id', 'nombre'],
+      grupoPermisos: ['id', 'grupoId', 'permisoId'],
+      recibos: ['id', 'clienteId', 'fecha', 'descripcion', 'total']
+    };
+
+    return map[vista] || [];
+  }
+
   esIdColumna(col: string): boolean {
-    return col.toLowerCase().startsWith('id') || col.toLowerCase().includes('id_');
+    return col.toLowerCase() === 'id' || col.toLowerCase().includes('id_') || col.toLowerCase().startsWith('id');
   }
 
   abrirFormularioNuevo() {
@@ -211,7 +265,7 @@ export class DashboardComponent implements OnInit {
         clienteId: 1,
         fecha: '',
         descripcion: '',
-        total: ''
+        total: 0
       };
     } else {
       this.registroActual = {};
@@ -222,16 +276,9 @@ export class DashboardComponent implements OnInit {
     this.modoEditar = true;
     this.modoCrear = false;
 
-    this.idRegistroSeleccionado =
-      row.id_usuario ||
-      row.id_cliente ||
-      row.id_grupo ||
-      row.id_permiso ||
-      row.id_recibo ||
-      row.id;
+    this.idRegistroSeleccionado = row.id ?? row.id_cliente ?? row.id_grupo ?? row.id_permiso ?? row.id_recibo;
 
     const limpio = { ...row };
-
     delete limpio.createdAt;
     delete limpio.updatedAt;
     delete limpio.grupo;
@@ -254,7 +301,7 @@ export class DashboardComponent implements OnInit {
 
     if (this.vistaActual === 'usuarios') {
       if (!payload.login || !payload.login.trim()) {
-        this.mensajeError = 'El login es obligatorio.';
+        this.mensajeError = 'El usuario es obligatorio.';
         return;
       }
       if (!payload.password || !payload.password.trim()) {
@@ -274,9 +321,42 @@ export class DashboardComponent implements OnInit {
       }
     }
 
+    if (this.vistaActual === 'grupos' && (!payload.nombre || !payload.nombre.trim())) {
+      this.mensajeError = 'El nombre del grupo es obligatorio.';
+      return;
+    }
+
+    if (this.vistaActual === 'permisos' && (!payload.nombre || !payload.nombre.trim())) {
+      this.mensajeError = 'El nombre del permiso es obligatorio.';
+      return;
+    }
+
+    if (this.vistaActual === 'grupoPermisos') {
+      const grupoId = Number(payload.grupoId);
+      const permisoId = Number(payload.permisoId);
+
+      if (!grupoId || !permisoId) {
+        this.mensajeError = 'Grupo y permiso son obligatorios.';
+        return;
+      }
+    }
+
+    if (this.vistaActual === 'recibos') {
+      const clienteId = Number(payload.clienteId);
+      const total = Number(payload.total);
+
+      if (!clienteId || !payload.fecha || !payload.descripcion || !payload.descripcion.trim() || !total) {
+        this.mensajeError = 'Cliente, fecha, descripción y total son obligatorios.';
+        return;
+      }
+    }
+
     delete payload.createdAt;
     delete payload.updatedAt;
     delete payload.grupo;
+    delete payload.permiso;
+    delete payload.cliente;
+    delete payload.usuario;
 
     this.apiService.crearRegistro(this.vistaActual, payload).subscribe({
       next: () => {
@@ -301,6 +381,9 @@ export class DashboardComponent implements OnInit {
     delete payload.createdAt;
     delete payload.updatedAt;
     delete payload.grupo;
+    delete payload.permiso;
+    delete payload.cliente;
+    delete payload.usuario;
 
     this.apiService.actualizarRegistro(this.vistaActual, this.idRegistroSeleccionado, payload).subscribe({
       next: () => {
@@ -315,13 +398,7 @@ export class DashboardComponent implements OnInit {
   }
 
   eliminar(row: any) {
-    const id =
-      row.id_usuario ||
-      row.id_cliente ||
-      row.id_grupo ||
-      row.id_permiso ||
-      row.id_recibo ||
-      row.id;
+    const id = row.id ?? row.id_cliente ?? row.id_grupo ?? row.id_permiso ?? row.id_recibo;
 
     if (!id) {
       this.mensajeError = 'No se pudo identificar el ID del registro.';
