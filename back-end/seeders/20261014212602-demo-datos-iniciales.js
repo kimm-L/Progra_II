@@ -36,7 +36,7 @@ module.exports = {
     ], {});
 
     // 4. Crear un usuario Administrador inicial con contraseña hasheada
-    const passwordHash = await bcrypt.hash('admin123', 10);
+    const passwordHash = await bcrypt.hash('123456789', 10);
     await queryInterface.bulkInsert('Usuarios', [
       {
         id: 1,
